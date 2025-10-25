@@ -1,0 +1,28 @@
+{
+    "type": "identify",
+    "payload": {
+        "id": 1
+    }
+}
+
+{
+    "type": "userlist",
+    "payload": { }
+}
+
+{
+	"type": "sendmessage",
+	"payload": { 
+        "sender": 1,
+        "recipient": 2,
+        "content": "hi!"
+    }
+}
+
+{
+    "type": "messagelist",
+    "payload": {
+        "id": 2,
+        "is_group": false
+    }
+}

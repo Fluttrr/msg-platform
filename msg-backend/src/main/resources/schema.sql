@@ -1,0 +1,10 @@
+CREATE SEQUENCE IF NOT EXISTS message_seq;
+
+CREATE TABLE IF NOT EXISTS message (
+    id INTEGER PRIMARY KEY DEFAULT nextval('message_seq'),
+    sender INTEGER NOT NULL,
+    recipient INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    is_group_msg BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

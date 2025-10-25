@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  app:
+    image: openjdk:21-jdk
+    container_name: spring_app
+    ports:
+      - "50011:50011"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/msg_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      USER_SERVICE_HOST: user_service
+      USER_SERVICE_PORT: 50010
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ./mvnw spring-boot:run
+    depends_on:
+      - db
+      - rabbitmq
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: msg_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  user_service:
+    image: masgenmann/users_microservice
+    container_name: user_service
+    ports:
+      - "50010:50010"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user_db:5432/userdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - user_db
+
+  user_db:
+    image: postgres:15
+    container_name: user_db
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: userdb
+      USER_SERVICE_HOST: user_service
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  user_db_data:
